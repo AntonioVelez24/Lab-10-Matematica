@@ -14,7 +14,7 @@ public class Launcher3D : MonoBehaviour
     [SerializeField] private int pointsCount;
     [SerializeField] private float spaceBetween;
 
-    private Vector2 direction;
+    private Vector3 direction;
 
     private void Start()
     {
@@ -27,11 +27,10 @@ public class Launcher3D : MonoBehaviour
 
     private void Update()
     {
-        Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 launchePosition = transform.position;
+        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.nearClipPlane));
+        Vector3 launchePosition = transform.position;
 
-
-        direction = mousePosition - launchePosition;
+        direction = (mousePosition - launchePosition).normalized;
 
 
         transform.right = direction;
@@ -49,16 +48,15 @@ public class Launcher3D : MonoBehaviour
         proyectile.GetComponent<Rigidbody2D>().velocity = transform.right * launchModifier;
     }
 
-    private Vector2 CurrentPosition(float t)
+    private Vector3 CurrentPosition(float t)
     {
-        return (Vector2)launchPoint.position + (direction.normalized * launchModifier * t) + (Vector2)(0.5f * Physics.gravity * (t * t));
+        return (Vector3)launchPoint.position + (direction.normalized * launchModifier * t) + (Vector3)(0.5f * Physics.gravity * (t * t));
     }
     public void ReadShoot(InputAction.CallbackContext context)
     {
         if (context.performed)
         {
             Shoot();
-
         }
     }
 }
